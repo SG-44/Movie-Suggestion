@@ -233,7 +233,7 @@ function MovieDetails() {
             {movie.production_companies && Array.isArray(movie.production_companies) ? (
               [...movie.production_companies]
               .map((p) => (
-                <div key={p.id} className="flex flex-col items-center justify-evenly bg-indigo-500 p-4 rounded-lg shadow-xl flex-shrink-0 w-48 h-60">
+                <div key={p.id} className="flex flex-col items-center justify-around bg-indigo-500 p-4 rounded-lg shadow-xl flex-shrink-0 w-48 h-60">
                   <img 
                     src={
                       p.logo_path

@@ -1,88 +1,28 @@
 import Navbar from "../components/Navbar/Navbar.jsx";
 import Footer from "../components/Footer/Footer.jsx";
-import Card from "./Card.jsx";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { useEffect, useRef, useState } from "react";
-import { fetchMovies } from "../util/API.js";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination.jsx";
-// import { useParams } from "react-router";
+import { Link } from "react-router";
 
 function Home() {
-  const containerRef = useRef(null);
-  const [data, setData] = useState([]);
-  const [isContentLoaded, setIsContentLoaded] = useState(false);
-  const [page, setPage] = useState(1);
-
-  // const pageCount = useParams();
-
-  // setPage(pageCount);
-
-  useEffect(() => {
-    async function getMovies() {
-      const movies = await fetchMovies(page);
-      setData(movies);
-      setIsContentLoaded(true);
-    }
-    getMovies();
-  }, [page]);
-
-  useGSAP(
-    () => {
-      gsap.from(containerRef.current, {
-        duration: 0.8,
-        opacity: 0,
-        y: -80,
-        ease: "bounce",
-      });
-    },
-    { scope: containerRef }
-  );
-
   return (
     <>
       <Navbar />
       <div
-        className="h-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 w-full justify-items-center p-8 pt-28"
-        ref={containerRef}
+        className="h-screen flex flex-col gap-8 w-full items-center justify-around p-8 pt-28 sm:flex-row sm:items-center sm:justify-around sm:gap-4"
       >
-        {data.map((movie, index) => (
-          <Card key={index} movie={movie} />
-        ))}
+        <Link className="w-70 h-80 bg-indigo-400 rounded-lg flex justify-center hover:*:scale-110 hover:bg-transparent hover:*:opacity-100 ease-out duration-175 hover:*:text-transparent relative" to="/actors/1">
+          <img src="public/Jason-Statham-007.jpg" alt="Actors" className="object-cover rounded-lg opacity-50 ease-out duration-150"/>
+          <h1 className="text-white text-6xl text-center m-auto font-bold absolute top-50 -translate-y-35 sm:top-50 sm:-translate-y-20">Actors</h1>
+        </Link>
+        <Link className="w-70 h-80 bg-indigo-400 rounded-lg flex justify-center hover:*:scale-110 hover:bg-transparent hover:*:opacity-100 ease-out duration-175 hover:*:text-transparent relative" to="/movies/now_playing/1">
+          <img src="public/movies.jpg" alt="Movies" className="object-cover rounded-lg opacity-50 ease-out duration-150" />
+          <h1 className="text-white text-6xl text-center m-auto font-bold absolute top-50 -translate-y-35 sm:top-50 sm:-translate-y-20 ease-in-out duration-150">Movies</h1>
+        </Link>
+        <Link className="w-70 h-80 bg-indigo-400 rounded-lg flex justify-center hover:*:scale-110 hover:bg-transparent hover:*:opacity-100 ease-out duration-175 hover:*:text-transparent relative" to="/tv/1">
+          <img src="public/brown-retro-electronic-tv-device.jpg" alt="TV Series" className="object-cover rounded-lg opacity-50 ease-out duration-150" />
+          <h1 className="text-white text-6xl text-center m-auto font-bold absolute top-50 -translate-y-35 sm:top-50 sm:-translate-y-20">TV Series</h1>
+        </Link>
       </div>
-      <Pagination className="text-center mx-auto my-8">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href={`/page=${1}`} />
-          </PaginationItem>
-          {data.map((index) => {
-            <PaginationItem key={index}>
-              <PaginationLink
-                href={`/page=${page}`}
-                isActive
-                onClick={() => setPage(index)}
-              >
-                {index}
-              </PaginationLink>
-            </PaginationItem>;
-          })}
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href={`/page=${1}`} />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-      {isContentLoaded && <Footer />}
+      <Footer />
     </>
   );
 }
