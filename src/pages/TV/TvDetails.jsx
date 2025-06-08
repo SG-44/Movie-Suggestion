@@ -63,7 +63,7 @@ const TvDetails = () => {
     ? `https://image.tmdb.org/t/p/w500/${tv.poster_path}`
     : `/istockphoto-1147544807-612x612.jpg`;
 
-  console.log(similar.results);
+  // console.log(tv);
 
   return (
     <>
@@ -108,7 +108,7 @@ const TvDetails = () => {
               {tv.vote_average}/10 ({tv.vote_count} rating)
             </p>
             <p className="text-indigo-800 w-full bg-indigo-100 p-4 mt-2 text-2xl text-center rounded-xl hover:shadow-2xl hover:bg-indigo-200 cursor-pointer hover:text-indigo-600 transition duration-200 ease-in-out">
-              <a href={tv.homepage}>
+              <a href={tv.homepage} target="_blank">
                 <strong>Watch Now!</strong>
               </a>
             </p>

@@ -6,8 +6,6 @@ const TvCard = ({ tv }) => {
     ? `https://image.tmdb.org/t/p/w200/${tv.poster_path}`
     : `/istockphoto-1147544807-612x612.jpg`;
 
-  console.log(tv);
-
   return (
     <Link to={`/tvDetails?q=${tv.id}`}>
       <div className="md:w-60 md:h-80 sm:w-48 sm:h-64 lg:w-66 lg:h-108 rounded-2xl flex flex-col justify-evenly items-center hover:shadow-lg transition duration-300 ease-in-out cursor-pointer p-4 bg-indigo-300">

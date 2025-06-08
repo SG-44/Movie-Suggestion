@@ -22,12 +22,12 @@ const Tv = () => {
     }, [pageCount]);
   
     useEffect(() => {
-      async function getMovies() {
+      async function getTv() {
         window.scrollTo(0, 0);
         const tvSeries = await fetchTV(category, page);
         setData(tvSeries);
       }
-      getMovies();
+      getTv();
     }, [category, page]);
   
     useGSAP(
@@ -143,8 +143,8 @@ const Tv = () => {
             />
           </PaginationItem>
         </PaginationContent>
-      </Pagination>
-      <Footer />
+      </Pagination> 
+      <Footer /> 
     </>
   )
 }

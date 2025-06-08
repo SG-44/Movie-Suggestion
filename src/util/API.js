@@ -1,23 +1,28 @@
 const movies = `https://api.themoviedb.org/3/movie/`;
 
-const Actors = 'https://api.themoviedb.org/3/person/popular?language=en-US&page=';
+const Actors =
+  "https://api.themoviedb.org/3/person/popular?language=en-US&page=";
 
-const tv = "https://api.themoviedb.org/3/tv/"
+const tv = "https://api.themoviedb.org/3/tv/";
 
 const ActorDetails = "https://api.themoviedb.org/3/person/";
+
+const apiToken = import.meta.env.VITE_TMDB_TOKEN;
 
 const options = {
   method: "GET",
   headers: {
     accept: "application/json",
-    Authorization:
-      `Bearer ${import.meta.env.ACCESS_TOKEN}`,
+    Authorization: `Bearer ${apiToken}`,
   },
 };
 
 async function fetchMovieCast(id) {
   try {
-    const response = await fetch(ActorDetails + id + "/movie_credits?language=en-US", options);
+    const response = await fetch(
+      ActorDetails + id + "/movie_credits?language=en-US",
+      options
+    );
     const data = await response.json();
     return data;
   } catch (error) {
@@ -28,7 +33,10 @@ async function fetchMovieCast(id) {
 
 async function fetchMovies(category, page) {
   try {
-    const response = await fetch(movies + category + "?language=en-US&page=" + page, options);
+    const response = await fetch(
+      movies + category + "?language=en-US&page=" + page,
+      options
+    );
     const data = await response.json();
     return data.results;
   } catch (error) {
@@ -39,7 +47,10 @@ async function fetchMovies(category, page) {
 
 async function fetchTV(category, page) {
   try {
-    const response = await fetch(tv + category + "?language=en-US&page=" + page, options);
+    const response = await fetch(
+      tv + category + "?language=en-US&page=" + page,
+      options
+    );
     const data = await response.json();
     return data.results;
   } catch (error) {
@@ -83,7 +94,10 @@ async function fetchTvDetails(TvSerieId) {
 
 async function fetchActorDetails(personId) {
   try {
-    const response = await fetch(ActorDetails + personId + "?language=en-US", options);
+    const response = await fetch(
+      ActorDetails + personId + "?language=en-US",
+      options
+    );
     const data = await response.json();
     return data;
   } catch (error) {
@@ -94,10 +108,7 @@ async function fetchActorDetails(personId) {
 
 async function fetchMovieCredit(movieId) {
   try {
-    const response = await fetch(
-      movies + movieId + "/credits",
-      options
-    );
+    const response = await fetch(movies + movieId + "/credits", options);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -108,10 +119,7 @@ async function fetchMovieCredit(movieId) {
 
 async function fetchTvCredit(tvId) {
   try {
-    const response = await fetch(
-      tv + tvId + "/credits",
-      options
-    );
+    const response = await fetch(tv + tvId + "/credits", options);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -122,10 +130,7 @@ async function fetchTvCredit(tvId) {
 
 async function fetchMovieTrailer(movieId) {
   try {
-    const response = await fetch(
-      movies + movieId + "/videos",
-      options
-    );
+    const response = await fetch(movies + movieId + "/videos", options);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -136,10 +141,7 @@ async function fetchMovieTrailer(movieId) {
 
 async function fetchSimilarMovies(movieId) {
   try {
-    const response = await fetch(
-      movies + movieId + "/similar",
-      options
-    );
+    const response = await fetch(movies + movieId + "/similar", options);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -150,10 +152,7 @@ async function fetchSimilarMovies(movieId) {
 
 async function fetchSimilarTv(tvId) {
   try {
-    const response = await fetch(
-      tv + tvId + "/similar",
-      options
-    );
+    const response = await fetch(tv + tvId + "/similar", options);
     const data = await response.json();
     return data;
   } catch (error) {
