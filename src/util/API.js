@@ -11,7 +11,7 @@ const options = {
   headers: {
     accept: "application/json",
     Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDk0MjEzYTE4NWNhNzQ1ZWE4Mzg1OWJiNGM5MmYyNSIsIm5iZiI6MTczOTcyNzA3NS4yMjUsInN1YiI6IjY3YjIyMGUzNTM2OTU4NjcyYjlmYjk4ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.bmZiZHvnPKiKHOOdMJ_13pu500oB7919TRZCzWvskEQ",
+      `Bearer ${import.meta.env.ACCESS_TOKEN}`,
   },
 };
 
