@@ -255,28 +255,28 @@ function Navbar() {
           </button>
           <ul className="hidden *:block absolute bg-gray-800 p-4">
             <Link
-              to="/movies"
+              to="/tv/airing_today"
               className="hover:text-indigo-300 border-b-2 border-transparent hover:border-indigo-400 duration-200 ease-in-out hover:scale-110 hover:-translate-y-1 mb-2"
             >
-              <li>On TV</li>
+              <li>Airing Today</li>
             </Link>
             <Link
-              to="/movies"
+              to="/tv/top_rated/1"
               className="hover:text-indigo-300 border-b-2 border-transparent hover:border-indigo-400 duration-200 ease-in-out hover:scale-110 hover:-translate-y-1 mb-2"
             >
-              <li>Top -Rated</li>
+              <li>Top - Rated</li>
             </Link>
             <Link
-              to="/movies"
+              to="/tv/popular/1"
               className="hover:text-indigo-300 border-b-2 border-transparent hover:border-indigo-400 duration-200 ease-in-out hover:scale-110 hover:-translate-y-1 mb-2"
             >
               <li>Popular</li>
             </Link>
             <Link
-              to="/movies"
+              to="/tv/on_the_air/1"
               className="hover:text-indigo-300 border-b-2 border-transparent hover:border-indigo-400 duration-200 ease-in-out hover:scale-110 hover:-translate-y-1"
             >
-              <li>Airing</li>
+              <li>On The Air</li>
             </Link>
           </ul>
         </li>

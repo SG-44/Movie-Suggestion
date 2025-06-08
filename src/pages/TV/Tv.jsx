@@ -1,71 +1,63 @@
-import Navbar from "../../components/Navbar/Navbar";
-import Footer from "../../components/Footer/Footer";
-import { useEffect, useRef, useState } from "react";
+import Footer from "@/components/Footer/Footer"
+import Navbar from "@/components/Navbar/Navbar"
+import { fetchTV } from "@/util/API";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import Card from "./Card";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { fetchMovies } from "@/util/API";
+import TvCard from "./TvCard";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
-function Movies() {
+const Tv = () => {
   const containerRef = useRef(null);
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const { pageCount } = useParams();
-  const { category } = useParams();
-
-  useEffect(() => {
-    if (pageCount) {
-      setPage(Number(pageCount));
-    }
-  }, [pageCount]);
-
-  useEffect(() => {
-    async function getMovies() {
-      window.scrollTo(0, 0);
-      const movies = await fetchMovies(category, page);
-      setData(movies);
-    }
-    getMovies();
-  }, [category, page]);
-
-  useGSAP(
-    () => {
-      gsap.from(containerRef.current, {
-        duration: 0.8,
-        opacity: 0,
-        y: -80,
-        ease: "bounce",
-      });
-    },
-    { scope: containerRef }
-  );
+    const [data, setData] = useState([]);
+    const [page, setPage] = useState(1);
+    const { pageCount } = useParams();
+    const { category } = useParams();
+  
+    useEffect(() => {
+      if (pageCount) {
+        setPage(Number(pageCount));
+      }
+    }, [pageCount]);
+  
+    useEffect(() => {
+      async function getMovies() {
+        window.scrollTo(0, 0);
+        const tvSeries = await fetchTV(category, page);
+        setData(tvSeries);
+      }
+      getMovies();
+    }, [category, page]);
+  
+    useGSAP(
+      () => {
+        gsap.from(containerRef.current, {
+          duration: 0.8,
+          opacity: 0,
+          y: -80,
+          ease: "bounce",
+        });
+      },
+      { scope: containerRef }
+    );
 
   return (
     <>
       <Navbar />
-      <div
+      <div 
         className="h-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-12 w-full justify-items-center p-8 pt-28"
         ref={containerRef}
       >
-        {data.map((movie, index) => (
-          <Card key={index} movie={movie} />
+        {data.map((tv, index) => (
+          <TvCard key={index} tv={tv} />
         ))}
       </div>
       <Pagination className="text-center mx-auto my-8">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              href={`/movies/${category}/${page}`}
+              href={`/tv/${category}/${page}`}
               onClick={() => {
                 if (page > 1) {
                   setPage(page - 1);
@@ -78,7 +70,7 @@ function Movies() {
           {page > 2 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/1`}
+                href={`/tv/${category}/1`}
                 isActive={false}
                 onClick={() => setPage(1)}
               >
@@ -96,7 +88,7 @@ function Movies() {
           {page > 1 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/${page}`}
+                href={`/tv/${category}/${page}`}
                 isActive={false}
                 onClick={() => setPage(page - 1)}
               >
@@ -107,7 +99,7 @@ function Movies() {
           {/* Current page */}
           <PaginationItem>
             <PaginationLink
-              href={`/movies/${category}/${page}`}
+              href={`/tv/${category}/${page}`}
               isActive={true}
               onClick={() => setPage(page)}
             >
@@ -118,7 +110,7 @@ function Movies() {
           {page < 20 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/${page}`}
+                href={`/tv/${category}/${page}`}
                 isActive={false}
                 onClick={() => setPage(page + 1)}
               >
@@ -136,7 +128,7 @@ function Movies() {
           {page < 19 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/20`}
+                href={`/tv/${category}/20`}
                 isActive={false}
                 onClick={() => setPage(20)}
               >
@@ -146,7 +138,7 @@ function Movies() {
           )}
           <PaginationItem>
             <PaginationNext
-              href={`/movies/${category}/${page}`}
+              href={`/tv/${category}/${page}`}
               onClick={() => setPage(page + 1)}
             />
           </PaginationItem>
@@ -154,7 +146,7 @@ function Movies() {
       </Pagination>
       <Footer />
     </>
-  );
+  )
 }
 
-export default Movies;
+export default Tv

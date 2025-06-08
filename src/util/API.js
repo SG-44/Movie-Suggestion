@@ -70,6 +70,17 @@ async function fetchMoviesDetails(movieId) {
   }
 }
 
+async function fetchTvDetails(TvSerieId) {
+  try {
+    const response = await fetch(tv + TvSerieId, options);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
 async function fetchActorDetails(personId) {
   try {
     const response = await fetch(ActorDetails + personId + "?language=en-US", options);
@@ -85,6 +96,20 @@ async function fetchMovieCredit(movieId) {
   try {
     const response = await fetch(
       movies + movieId + "/credits",
+      options
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchTvCredit(tvId) {
+  try {
+    const response = await fetch(
+      tv + tvId + "/credits",
       options
     );
     const data = await response.json();
@@ -123,6 +148,20 @@ async function fetchSimilarMovies(movieId) {
   }
 }
 
+async function fetchSimilarTv(tvId) {
+  try {
+    const response = await fetch(
+      tv + tvId + "/similar",
+      options
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
 export {
   fetchMovies,
   fetchMoviesDetails,
@@ -133,4 +172,7 @@ export {
   fetchActorDetails,
   fetchMovieCast,
   fetchTV,
+  fetchTvDetails,
+  fetchTvCredit,
+  fetchSimilarTv,
 };

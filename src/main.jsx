@@ -7,6 +7,8 @@ import Movies from "./pages/Movies/Movies.jsx";
 import Error from "./pages/Error.jsx";
 import Actors from "./pages/Actors/Actors.jsx";
 import ActorDetails from "./pages/Actors/ActorDetails.jsx";
+import Tv from "./pages/TV/Tv.jsx";
+import TvDetails from "./pages/TV/TvDetails.jsx";
 
 // const movieId = useSearchParams.get("q");
 // const actorId = useSearchParams.get("q");
@@ -21,10 +23,6 @@ const router = new createBrowserRouter([
     path: "/movies/:category/:pageCount",
     element: <Movies />,
   },
-  // {
-  //   path: "/tv/:category/:pageCount",
-  //   element: <TV />,
-  // },
   {
     path: `/moviedetails`,
     element: <MovieDetails />,
@@ -36,6 +34,14 @@ const router = new createBrowserRouter([
   {
     path: `/actorDetails`,
     element: <ActorDetails />,
+  },
+  {
+    path: "/tv/:category/:pageCount",
+    element: <Tv />,
+  },
+  {
+    path: "/tvDetails",
+    element: <TvDetails />,
   },
 ]);
 
