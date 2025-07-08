@@ -17,6 +17,7 @@ const options = {
   },
 };
 
+// Movies Section
 async function fetchMovieCast(id) {
   try {
     const response = await fetch(
@@ -45,81 +46,9 @@ async function fetchMovies(category, page) {
   }
 }
 
-async function fetchTV(category, page) {
-  try {
-    const response = await fetch(
-      tv + category + "?language=en-US&page=" + page,
-      options
-    );
-    const data = await response.json();
-    return data.results;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchActors(page) {
-  try {
-    const response = await fetch(Actors + page, options);
-    const data = await response.json();
-    return data.results;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
 async function fetchMoviesDetails(movieId) {
   try {
     const response = await fetch(movies + movieId, options);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchTvDetails(TvSerieId) {
-  try {
-    const response = await fetch(tv + TvSerieId, options);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchActorDetails(personId) {
-  try {
-    const response = await fetch(
-      ActorDetails + personId + "?language=en-US",
-      options
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchMovieCredit(movieId) {
-  try {
-    const response = await fetch(movies + movieId + "/credits", options);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-async function fetchTvCredit(tvId) {
-  try {
-    const response = await fetch(tv + tvId + "/credits", options);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -150,9 +79,108 @@ async function fetchSimilarMovies(movieId) {
   }
 }
 
+async function fetchMovieCredit(movieId) {
+  try {
+    const response = await fetch(movies + movieId + "/credits", options);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+// TvSeries Section
+async function fetchTV(category, page) {
+  try {
+    const response = await fetch(
+      tv + category + "?language=en-US&page=" + page,
+      options
+    );
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchTvDetails(tvId) {
+  try {
+    const response = await fetch(tv + tvId + "?language=en-US", options);
+    const data = await response.json();
+    return data; // <-- return the TV show object, not data.results
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchTvFullDetails(tvId, season) {
+  try {
+    const response = await fetch(tv + tvId + "/season/" + season + "?language=en-US", options);
+    const data = await response.json();
+    return data; // <-- return the TV show object, not data.results
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
 async function fetchSimilarTv(tvId) {
   try {
     const response = await fetch(tv + tvId + "/similar", options);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchTvCredit(tvId) {
+  try {
+    const response = await fetch(tv + tvId + "/credits", options);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchTvCreditWithSeason(tvId, season) {
+  try {
+    const response = await fetch(
+      tv + tvId + "/season/" + season + "/credits",
+      options
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+// Actors Section
+async function fetchActors(page) {
+  try {
+    const response = await fetch(Actors + page, options);
+    const data = await response.json();
+    return data.results;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+async function fetchActorDetails(personId) {
+  try {
+    const response = await fetch(
+      ActorDetails + personId + "?language=en-US",
+      options
+    );
     const data = await response.json();
     return data;
   } catch (error) {
@@ -174,4 +202,6 @@ export {
   fetchTvDetails,
   fetchTvCredit,
   fetchSimilarTv,
+  fetchTvFullDetails,
+  fetchTvCreditWithSeason,
 };

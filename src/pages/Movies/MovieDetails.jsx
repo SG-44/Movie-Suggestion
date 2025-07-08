@@ -18,6 +18,7 @@ function MovieDetails() {
   const [credit, setCredit] = useState(null);
   const [trailer, setTrailer] = useState(null);
   const [similar, setSimilar] = useState(null);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
 
   gsap.registerPlugin(useGSAP);
 
@@ -71,8 +72,6 @@ function MovieDetails() {
     ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
     : `/istockphoto-1147544807-612x612.jpg`;
 
-  console.log(credit);
-
   return (
     <>
       <Navbar />
@@ -106,7 +105,37 @@ function MovieDetails() {
             <p className="text-white my-4 text-left text-2xl">
               <strong>Description: </strong>
               <br />
-              {movie.overview || "No description available."}
+              {movie.overview ? (
+                  movie.overview.length > 700 && !isBioExpanded ? (
+                    <>
+                      {movie.overview.slice(0, 700)}
+                      ...{" "}
+                      <button
+                        className="text-purple-300 underline cursor-pointer"
+                        onClick={() => setIsBioExpanded(true)}
+                      >
+                        Show more
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {movie.overview}
+                      {movie.overview.length > 700 && (
+                        <>
+                          {" "}
+                          <button
+                            className="text-indigo-400 underline cursor-pointer"
+                            onClick={() => setIsBioExpanded(false)}
+                          >
+                            Show less
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )
+                ) : (
+                  "No bio available."
+              )}
             </p>
             <p className="text-white mt-2 text-xl">
               <strong>Rating : </strong>

@@ -40,7 +40,7 @@ const router = new createBrowserRouter([
     element: <Tv />,
   },
   {
-    path: "/tvDetails",
+    path: "/tvDetails/:seasonParam/:episodeParam",
     element: <TvDetails />,
   },
 ]);

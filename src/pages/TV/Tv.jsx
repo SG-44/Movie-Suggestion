@@ -12,8 +12,7 @@ const Tv = () => {
   const containerRef = useRef(null);
     const [data, setData] = useState([]);
     const [page, setPage] = useState(1);
-    const { pageCount } = useParams();
-    const { category } = useParams();
+    const { pageCount, category } = useParams();
   
     useEffect(() => {
       if (pageCount) {

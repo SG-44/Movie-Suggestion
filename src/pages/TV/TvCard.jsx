@@ -7,7 +7,7 @@ const TvCard = ({ tv }) => {
     : `/istockphoto-1147544807-612x612.jpg`;
 
   return (
-    <Link to={`/tvDetails?q=${tv.id}`}>
+    <Link to={`/tvDetails/1/1?q=${tv.id}`}>
       <div className="md:w-60 md:h-80 sm:w-48 sm:h-64 lg:w-66 lg:h-108 rounded-2xl flex flex-col justify-evenly items-center hover:shadow-lg transition duration-300 ease-in-out cursor-pointer p-4 bg-indigo-300">
         <img
           src={posterURL}
