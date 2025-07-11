@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer/Footer";
 import Navbar from "@/components/Navbar/Navbar";
 import { fetchActorDetails, fetchMovieCast } from "@/util/API";
 import { useEffect, useState } from "react";
@@ -15,7 +16,7 @@ const ActorDetails = () => {
 
     async function fetchMovieDetails() {
       try {
-        // await new Promise((resolve) => setTimeout(resolve, 5000));
+        // await new Promise((resolve) => setTimeout(resolve, 5000000));
         // for simulating long fetching
         const data = await fetchActorDetails(actorId);
         const cast = await fetchMovieCast(actorId);
@@ -32,17 +33,21 @@ const ActorDetails = () => {
     return (
       <>
         <div className="h-18 bg-gray-800 w-full"></div>
-        <div className="h-full mt-8 p-8 flex border-2 border-indigo-400 mx-4 rounded-2xl overflow-y-hidden">
+        <div className="h-full mt-8 p-8 flex sm:flex-col sm:items-center border-2 border-indigo-400 mx-4 rounded-2xl overflow-y-hidden">
           <img
             src="/istockphoto-1147544807-612x612.jpg"
-            className="rounded-lg shadow-lg w-120 h-160 animate-pulse"
+            className="rounded-lg shadow-lg w-120 h-160 sm:w-80 sm:h-120 animate-pulse"
           />
-          <div className="flex w-screen flex-col items-start mx-8 gap-5 *:animate-pulse">
-            <div className="h-12 w-48 bg-gray-500 mt-4"></div>
+
+          <div className="flex w-screen sm:w-sm flex-col sm:items-center items-start mx-8 gap-5 *:animate-pulse">
+            <div className="flex gap-4 sm:w-sm">
+              <div className="h-12 w-64 bg-gray-500 mt-4"></div>
+              <div className="h-12 w-52 bg-gray-500 mt-4"></div>
+            </div>
             <div className="h-6 w-24 bg-gray-500 mt-2"></div>
             <div className="h-8 w-72 bg-gray-500 mt-2"></div>
             <div className="h-8 w-68 bg-gray-500 mt-2"></div>
-            <div className="h-8 w-112 bg-gray-500 mt-2"></div>
+            <div className="h-8 w-84 bg-gray-500 mt-2"></div>
             <div className="h-8 w-92 bg-gray-500 mt-2"></div>
             <div className="h-48 w-full bg-gray-500 mt-4"></div>
             <div className="h-8 w-92 bg-gray-500 mt-2"></div>
@@ -56,84 +61,89 @@ const ActorDetails = () => {
     ? `https://image.tmdb.org/t/p/w500/${data.profile_path}`
     : `/istockphoto-1147544807-612x612.jpg`;
 
-  console.log(data);
-  
   return (
     <>
       <Navbar />
-      <div className="p-8 flex-col border-2 border-indigo-400 mx-4 rounded-2xl overflow-y-hidden m-26">
-        <div className="flex items-start">
+      <div className="p-8 flex-col border-2 border-indigo-400 mx-4 rounded-2xl overflow-y-hidden m-8 mt-26">
+        <div className="flex sm:flex-row md:flex-row lg:flex-row lg:items-start md:items-start sm:items-start items-center flex-col gap-4">
           <img
             src={profileURL}
             alt={data.original_title}
-            className="rounded-lg shadow-lg w-120 h-160"
+            className="rounded-lg shadow-lg w-50 h-80 sm:w-80 sm:h-120 md:w-100 md:h-140 lg:w-110 lg:h-160"
           />
-          <div className="flex flex-col items-start mx-8 gap-6">
-            <h1 className="text-6xl font-bold text-white">{data.name}</h1>
-            <p className="text-white text-2xl">
+          <div className="flex flex-col sm:items-start items-start mx-2 gap-8">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center">{data.name}</h1>
+            <p className="text-white text-xl sm:text-2xl">
               <strong>Birth Date : </strong> {data.birthday}
             </p>
-            <p className="text-white text-2xl">
-              <strong>Date of death : </strong> {data.deathday || "Still Standing"}
+            <p className="text-white text-xl sm:text-2xl">
+              <strong>Date of death : </strong>{" "}
+              {data.deathday || "Still Standing"}
             </p>
-            <p className="text-white mt-2 text-2xl">
+            <p className="text-white mt-2 text-xl sm:text-2xl">
               <strong>Place of Birth : </strong>
               {data.place_of_birth || "No place of birth available."}
             </p>
-            <p className="text-white mt-2 text-2xl">
+            <p className="text-white mt-2 text-xl sm:text-2xl">
               <strong>Gender : </strong>
               {data.gender === 1 ? "Female" : "Male"}
             </p>
-            <p className="text-white my-4 text-left text-2xl">
-              <strong>Biography: </strong>
-              <br />
-              {data.biography ? (
-                data.biography.length > 700 && !isBioExpanded ? (
-                  <>
-                    {data.biography.slice(0, 700)}
-                    ...{" "}
-                    <button
-                      className="text-purple-300 underline cursor-pointer"
-                      onClick={() => setIsBioExpanded(true)}
-                    >
-                      Show more
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    {data.biography}
-                    {data.biography.length > 700 && (
-                      <>
-                        {" "}
-                        <button
-                          className="text-indigo-400 underline cursor-pointer"
-                          onClick={() => setIsBioExpanded(false)}
-                        >
-                          Show less
-                        </button>
-                      </>
-                    )}
-                  </>
-                )
-              ) : (
-                "No bio available."
-              )}
-            </p>
           </div>
+        </div>
+        {/* Biography section below image/info */}
+        <div className="flex flex-col items-center w-full mt-8">
+          <p className="text-white my-2 text-left text-2xl">
+            <h1 className="text-2xl text-white font-bold">Biography : </h1>
+            <br />
+            {data.biography ? (
+              data.biography.length > 400 && !isBioExpanded ? (
+                <>
+                  {data.biography.slice(0, 400)}...
+                  <button
+                    className="text-purple-300 underline cursor-pointer"
+                    onClick={() => setIsBioExpanded(true)}
+                  >
+                    Show more
+                  </button>
+                </>
+              ) : (
+                <>
+                  {data.biography}
+                  {data.biography.length > 400 && (
+                    <>
+                      {" "}
+                      <button
+                        className="text-indigo-400 underline cursor-pointer"
+                        onClick={() => setIsBioExpanded(false)}
+                      >
+                        Show less
+                      </button>
+                    </>
+                  )}
+                </>
+              )
+            ) : (
+              "No bio available."
+            )}
+          </p>
         </div>
         <div className="flex flex-col my-8">
           <h1 className="text-2xl text-white font-bold">Related Movies :</h1>
-          <div className="flex gap-8 m-4 overflow-x-auto whitespace-nowrap p-4">
-            {cast && Array.isArray(cast.cast) && cast.cast.some(c => c.poster_path) ? (
+          <div className="flex gap-4 overflow-x-auto whitespace-nowrap p-2">
+            {cast &&
+            Array.isArray(cast.cast) &&
+            cast.cast.some((c) => c.poster_path) ? (
               [...cast.cast]
-                .filter(movie => movie.release_date)
-                .sort((a, b) => new Date(b.release_date) - new Date(a.release_date))
+                .filter((movie) => movie.release_date)
+                .sort(
+                  (a, b) => new Date(b.release_date) - new Date(a.release_date)
+                )
                 .map((relatedMovie) => (
                   <a
                     key={relatedMovie.id}
                     href={`/moviedetails?q=${relatedMovie.id}`}
                   >
-                    <div className="flex flex-col items-center bg-gray-800 p-4 rounded-lg shadow-xl flex-shrink-0 w-48 h-auto">
+                    <div className="flex flex-col items-center bg-gray-800 p-4 rounded-lg shadow-xl w-32 h-64 sm:h-auto sm:w-48">
                       <img
                         src={
                           relatedMovie.poster_path
@@ -141,9 +151,9 @@ const ActorDetails = () => {
                             : `/istockphoto-1147544807-612x612.jpg`
                         }
                         alt={relatedMovie.title}
-                        className="w-32 h-48 rounded-lg object-cover"
+                        className="w-32 sm:h-48 h-40 rounded-lg object-cover"
                       />
-                      <h1 className="text-white text-lg font-bold mt-2 text-center line-clamp-2 text-wrap">
+                      <h1 className="text-white text-md sm:text-lg font-bold mt-2 text-center line-clamp-2 text-wrap">
                         {relatedMovie.title}
                       </h1>
                       <p className="text-gray-400 text-sm text-center">
@@ -158,6 +168,7 @@ const ActorDetails = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
