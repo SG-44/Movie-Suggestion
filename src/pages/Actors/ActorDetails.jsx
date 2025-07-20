@@ -72,7 +72,9 @@ const ActorDetails = () => {
             className="rounded-lg shadow-lg w-50 h-80 sm:w-80 sm:h-120 md:w-100 md:h-140 lg:w-110 lg:h-160"
           />
           <div className="flex flex-col sm:items-start items-start mx-2 gap-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center">{data.name}</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center">
+              {data.name}
+            </h1>
             <p className="text-white text-xl sm:text-2xl">
               <strong>Birth Date : </strong> {data.birthday}
             </p>
