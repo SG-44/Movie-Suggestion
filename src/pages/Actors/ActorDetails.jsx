@@ -69,24 +69,24 @@ const ActorDetails = () => {
           <img
             src={profileURL}
             alt={data.original_title}
-            className="rounded-lg shadow-lg w-50 h-80 sm:w-80 sm:h-120 md:w-100 md:h-140 lg:w-110 lg:h-160"
+            className="rounded-lg shadow-lg w-55 h-80 sm:w-80 sm:h-120 md:w-100 md:h-140 lg:w-110 lg:h-160"
           />
-          <div className="flex flex-col sm:items-start items-start mx-2 gap-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center">
+          <div className="flex flex-col sm:items-start items-start mx-2 gap-10">
+            <h1 className="text-5xl md:text-5xl lg:text-6xl font-bold text-white text-center">
               {data.name}
             </h1>
-            <p className="text-white text-xl sm:text-2xl">
+            <p className="text-white text-xl sm:text-3xl">
               <strong>Birth Date : </strong> {data.birthday}
             </p>
-            <p className="text-white text-xl sm:text-2xl">
+            <p className="text-white text-xl sm:text-3xl">
               <strong>Date of death : </strong>{" "}
               {data.deathday || "Still Standing"}
             </p>
-            <p className="text-white mt-2 text-xl sm:text-2xl">
+            <p className="text-white mt-2 text-xl sm:text-3xl">
               <strong>Place of Birth : </strong>
               {data.place_of_birth || "No place of birth available."}
             </p>
-            <p className="text-white mt-2 text-xl sm:text-2xl">
+            <p className="text-white mt-2 text-xl sm:text-3xl">
               <strong>Gender : </strong>
               {data.gender === 1 ? "Female" : "Male"}
             </p>
@@ -95,7 +95,7 @@ const ActorDetails = () => {
         {/* Biography section below image/info */}
         <div className="flex flex-col items-center w-full mt-8">
           <p className="text-white my-2 text-left text-2xl">
-            <h1 className="text-2xl text-white font-bold">Biography : </h1>
+            <h1 className="text-3xl text-white font-bold">Biography : </h1>
             <br />
             {data.biography ? (
               data.biography.length > 400 && !isBioExpanded ? (
@@ -131,7 +131,7 @@ const ActorDetails = () => {
         </div>
         {/* Related movies section */}
         <div className="flex flex-col my-8">
-          <h1 className="text-2xl text-white font-bold">Related Movies :</h1>
+          <h1 className="text-3xl text-white font-bold">Related Movies :</h1>
           <div className="flex gap-4 overflow-x-auto whitespace-nowrap p-2">
             {cast &&
             Array.isArray(cast.cast) &&
