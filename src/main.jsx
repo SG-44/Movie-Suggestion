@@ -12,7 +12,7 @@ import TvDetails from "./pages/TV/TvDetails.jsx";
 
 const router = new createHashRouter([
   {
-    path: "/Movie-Suggestion",
+    path: "/",
     element: <Home />,
     errorElement: <Error />,
   },
