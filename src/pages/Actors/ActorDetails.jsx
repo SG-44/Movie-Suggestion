@@ -129,6 +129,7 @@ const ActorDetails = () => {
             )}
           </p>
         </div>
+        {/* Related movies section */}
         <div className="flex flex-col my-8">
           <h1 className="text-2xl text-white font-bold">Related Movies :</h1>
           <div className="flex gap-4 overflow-x-auto whitespace-nowrap p-2">
