@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; url=./index.html" />
+    <meta http-equiv="refresh" content="0; url=/Movie-Suggestion/index.html" />
+    <script>
+      // If the user lands on a 404, redirect to the correct index.html with the full path preserved
+      var path = location.pathname.replace("/Movie-Suggestion", "");
+      location.replace(
+        "/Movie-Suggestion/index.html" + (path ? "#" + path : "")
+      );
+    </script>
   </head>
   <body></body>
 </html>
