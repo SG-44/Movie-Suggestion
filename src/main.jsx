@@ -15,7 +15,7 @@ import TvDetails from "./pages/TV/TvDetails.jsx";
 
 const router = new createBrowserRouter([
   {
-    path: "/Movie-Suggestion",
+    path: "/",
     element: <Home />,
     errorElement: <Error />,
   },
