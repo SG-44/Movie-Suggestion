@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router";
+import { RouterProvider, createHashRouter } from "react-router";
 import Home from "./pages/Home.jsx";
 import MovieDetails from "./pages/Movies/MovieDetails.jsx";
 import Movies from "./pages/Movies/Movies.jsx";
@@ -10,10 +10,7 @@ import ActorDetails from "./pages/Actors/ActorDetails.jsx";
 import Tv from "./pages/TV/Tv.jsx";
 import TvDetails from "./pages/TV/TvDetails.jsx";
 
-// const movieId = useSearchParams.get("q");
-// const actorId = useSearchParams.get("q");
-
-const router = new createBrowserRouter([
+const router = new createHashRouter([
   {
     path: "/Movie-Suggestion",
     element: <Home />,
@@ -47,6 +44,6 @@ const router = new createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} basename="/Movie-Suggestion" />
+    <RouterProvider router={router} />
   </StrictMode>
 );
