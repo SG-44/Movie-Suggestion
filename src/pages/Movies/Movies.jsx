@@ -64,7 +64,7 @@ function Movies() {
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              href={`/movies/${category}/${page}`}
+              href={`/Movie-Suggestion/#/movies/${category}/${page}`}
               onClick={() => {
                 if (page > 1) {
                   setPage(page - 1);
@@ -77,7 +77,7 @@ function Movies() {
           {page > 2 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/1`}
+                href={`/Movie-Suggestion/#/movies/${category}/1`}
                 isActive={false}
                 onClick={() => setPage(1)}
               >
@@ -95,7 +95,7 @@ function Movies() {
           {page > 1 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/${page}`}
+                href={`/Movie-Suggestion/#/movies/${category}/${page}`}
                 isActive={false}
                 onClick={() => setPage(page - 1)}
               >
@@ -106,7 +106,7 @@ function Movies() {
           {/* Current page */}
           <PaginationItem>
             <PaginationLink
-              href={`/movies/${category}/${page}`}
+              href={`/Movie-Suggestion/#/movies/${category}/${page}`}
               isActive={true}
               onClick={() => setPage(page)}
             >
@@ -117,7 +117,7 @@ function Movies() {
           {page < 20 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/${page}`}
+                href={`/Movie-Suggestion/#/movies/${category}/${page}`}
                 isActive={false}
                 onClick={() => setPage(page + 1)}
               >
@@ -135,7 +135,7 @@ function Movies() {
           {page < 19 && (
             <PaginationItem>
               <PaginationLink
-                href={`/movies/${category}/20`}
+                href={`/Movie-Suggestion/#/movies/${category}/20`}
                 isActive={false}
                 onClick={() => setPage(20)}
               >
@@ -145,7 +145,7 @@ function Movies() {
           )}
           <PaginationItem>
             <PaginationNext
-              href={`/movies/${category}/${page}`}
+              href={`/Movie-Suggestion/#/movies/${category}/${page}`}
               onClick={() => setPage(page + 1)}
             />
           </PaginationItem>

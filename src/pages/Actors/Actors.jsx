@@ -17,7 +17,7 @@ import CardActor from "./CardActor";
 const Actors = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  var { pageCount } = useParams();
+  const { pageCount } = useParams();
 
   useEffect(() => {
     if (pageCount) {
@@ -26,112 +26,58 @@ const Actors = () => {
   }, [pageCount]);
 
   useEffect(() => {
-    async function getActors() {
+    async function getMovies() {
       window.scrollTo(0, 0);
-      const actors = await fetchActors(page);
-      setData(actors);
+      const movies = await fetchActors();
+      setData(movies);
     }
-    getActors();
+    getMovies();
   }, [page]);
 
   return (
     <>
       <Navbar />
       <div className="h-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-12 w-full justify-items-center p-8 pt-28">
-        {data
-          .filter((actor) => actor.profile_path)
-          .filter((actor) => actor.known_for_department === "Acting")
-          .map((data, index) => (
-            <CardActor key={index} data={data} />
-          ))}
+        {data.map((data, index) => (
+          <CardActor key={index} data={data} />
+        ))}
       </div>
       <Pagination className="text-center mx-auto my-8">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              href={`/actors/${page}`}
+              href={`/Movie-Suggestion/#/actors/${page}`}
               onClick={() => {
-                if (page > 1) {
+                if (page >= 1) {
                   setPage(page - 1);
+                } else {
+                  setPage(1);
                 }
               }}
               className={page === 1 ? "hidden" : ""}
             />
           </PaginationItem>
-          {/* First page always visible if not on first */}
-          {page > 2 && (
-            <PaginationItem>
+          {data.slice(0, 3).map((pageInfo, index) => (
+            <PaginationItem key={data[index].id}>
               <PaginationLink
-                href={`/actors/1`}
-                isActive={false}
-                onClick={() => setPage(1)}
+                href={`/Movie-Suggestion/#/actors/${index + 1}`}
+                isActive={index + 1 === page}
+                onClick={() => {
+                  setPage(index + 1);
+                }}
               >
-                1
+                {index + 1}
               </PaginationLink>
             </PaginationItem>
-          )}
-          {/* Ellipsis if more than two pages before current */}
-          {page > 3 && (
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          )}
-          {/* Previous page if not on first */}
-          {page > 1 && (
-            <PaginationItem>
-              <PaginationLink
-                href={`/actors/${page}`}
-                isActive={false}
-                onClick={() => setPage(page - 1)}
-              >
-                {page - 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-          {/* Current page */}
+          ))}
           <PaginationItem>
-            <PaginationLink
-              href={`/actors/${page}`}
-              isActive={true}
-              onClick={() => setPage(page)}
-            >
-              {page}
-            </PaginationLink>
+            <PaginationEllipsis />
           </PaginationItem>
-          {/* Next page if not on last */}
-          {page < 20 && (
-            <PaginationItem>
-              <PaginationLink
-                href={`/actors/${page}`}
-                isActive={false}
-                onClick={() => setPage(page + 1)}
-              >
-                {page + 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-          {/* Ellipsis if more than two pages after current */}
-          {page < 18 && (
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          )}
-          {/* Last page always visible if not on last */}
-          {page < 19 && (
-            <PaginationItem>
-              <PaginationLink
-                href={`/actors/20`}
-                isActive={false}
-                onClick={() => setPage(20)}
-              >
-                20
-              </PaginationLink>
-            </PaginationItem>
-          )}
           <PaginationItem>
             <PaginationNext
-              href={`/actors/${page}`}
+              href={`/Movie-Suggestion/#/actors/${page}`}
               onClick={() => setPage(page + 1)}
+              disabled={page === 20}
             />
           </PaginationItem>
         </PaginationContent>

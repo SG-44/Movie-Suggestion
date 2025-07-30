@@ -33,13 +33,13 @@ const ActorDetails = () => {
     return (
       <>
         <div className="h-18 bg-gray-800 w-full"></div>
-        <div className="h-full mt-8 p-8 flex sm:flex-col sm:items-center border-2 border-indigo-400 mx-4 rounded-2xl overflow-y-hidden">
+        <div className="flex m-12 sm:flex-row md:flex-row lg:flex-row lg:items-start md:items-start sm:items-start items-center flex-col gap-4">
           <img
-            src="/istockphoto-1147544807-612x612.jpg"
-            className="rounded-lg shadow-lg w-120 h-160 sm:w-80 sm:h-120 animate-pulse"
+            src="/Movie-Suggestion/istockphoto-1147544807-612x612.jpg"
+            className="rounded-lg shadow-lg w-80 h-120 sm:w-120 sm:h-160 animate-pulse"
           />
 
-          <div className="flex w-screen sm:w-sm flex-col sm:items-center items-start mx-8 gap-5 *:animate-pulse">
+          <div className="flex w-sm sm:w-screen flex-col sm:items-start items-center mx-8 gap-5 *:animate-pulse">
             <div className="flex gap-4 sm:w-sm">
               <div className="h-12 w-64 bg-gray-500 mt-4"></div>
               <div className="h-12 w-52 bg-gray-500 mt-4"></div>
@@ -59,7 +59,7 @@ const ActorDetails = () => {
 
   const profileURL = data.profile_path
     ? `https://image.tmdb.org/t/p/w500/${data.profile_path}`
-    : `/istockphoto-1147544807-612x612.jpg`;
+    : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`;
 
   return (
     <>
@@ -95,8 +95,7 @@ const ActorDetails = () => {
         {/* Biography section below image/info */}
         <div className="flex flex-col items-center w-full mt-8">
           <p className="text-white my-2 text-left text-2xl">
-            <h1 className="text-3xl text-white font-bold">Biography : </h1>
-            <br />
+            <h1 className="text-3xl text-white font-bold my-2">Biography : </h1>
             {data.biography ? (
               data.biography.length > 400 && !isBioExpanded ? (
                 <>

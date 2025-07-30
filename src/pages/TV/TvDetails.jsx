@@ -59,7 +59,7 @@ const TvDetails = () => {
         <div className="h-18 bg-gray-800 w-full"></div>
         <div className="h-full mt-8 p-8 flex border-2 border-indigo-400 mx-4 rounded-2xl overflow-y-hidden">
           <img
-            src="/istockphoto-1147544807-612x612.jpg"
+            src="/Movie-Suggestion/istockphoto-1147544807-612x612.jpg"
             className="rounded-lg shadow-lg w-120 h-160 animate-pulse"
           />
           <div className="flex w-screen flex-col items-start mx-8 gap-5 *:animate-pulse">
@@ -79,7 +79,7 @@ const TvDetails = () => {
 
   const posterURL = tv.poster_path
     ? `https://image.tmdb.org/t/p/w500/${tv.poster_path}`
-    : `/istockphoto-1147544807-612x612.jpg`;
+    : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`;
 
   console.log(fullData.episodes.length);
 
