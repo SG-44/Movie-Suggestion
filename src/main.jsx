@@ -37,7 +37,7 @@ const router = new createHashRouter([
     element: <Tv />,
   },
   {
-    path: "/tvDetails/:seasonParam/:episodeParam",
+    path: "/tvDetails/:seasonParam/",
     element: <TvDetails />,
   },
 ]);

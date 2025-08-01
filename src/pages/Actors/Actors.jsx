@@ -57,7 +57,7 @@ const Actors = () => {
               className={page === 1 ? "hidden" : ""}
             />
           </PaginationItem>
-          {data.slice(0, 3).map((pageInfo, index) => (
+          {data.slice(0, 3).map((_, index) => (
             <PaginationItem key={data[index].id}>
               <PaginationLink
                 href={`/Movie-Suggestion/#/actors/${index + 1}`}

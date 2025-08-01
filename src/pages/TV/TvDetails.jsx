@@ -365,13 +365,13 @@ const TvDetails = () => {
                     new Date(b.first_air_date) - new Date(a.first_air_date)
                 )
                 .map((relatedTv) => (
-                  <a key={relatedTv.id} href={`/tvDetails?q=${relatedTv.id}`}>
+                  <a key={relatedTv.id} href={`/#/tvDetails/1/?q=${relatedTv.id}`}>
                     <div className="flex flex-col items-center bg-gray-800 p-4 rounded-lg shadow-xl flex-shrink-0 w-48 h-auto">
                       <img
                         src={
                           relatedTv.poster_path
                             ? `https://image.tmdb.org/t/p/w200/${relatedTv.poster_path}`
-                            : `/istockphoto-1147544807-612x612.jpg`
+                            : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`
                         }
                         alt={relatedTv.name}
                         className="w-32 h-48 rounded-lg object-cover"
