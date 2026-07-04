@@ -18,6 +18,8 @@ const Actors = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const { pageCount } = useParams();
+  const PAGE_SIZE = 24;
+  const MAX_PAGES_TO_FETCH = 20;
 
   useEffect(() => {
     if (pageCount) {
@@ -26,20 +28,47 @@ const Actors = () => {
   }, [pageCount]);
 
   useEffect(() => {
-    async function getMovies() {
-      window.scrollTo(0, 0);
-      const movies = await fetchActors();
-      setData(movies);
+    async function getActors() {
+      const currentPage = Number(pageCount ?? 1);
+      const uniqueActors = [];
+      const seenIds = new Set();
+      let pageToFetch = 1;
+
+      while (
+        uniqueActors.length < currentPage * PAGE_SIZE &&
+        pageToFetch <= MAX_PAGES_TO_FETCH
+      ) {
+        const fetchedActors = await fetchActors(pageToFetch);
+
+        fetchedActors.forEach((actor) => {
+          const hasProfilePicture = actor.profile_path !== null;
+          const hasSoftcoreWork = (actor.known_for ?? []).some(
+            (work) => work.softcore === true,
+          );
+
+          if (hasProfilePicture && !hasSoftcoreWork && !seenIds.has(actor.id)) {
+            seenIds.add(actor.id);
+            uniqueActors.push(actor);
+          }
+        });
+
+        pageToFetch += 1;
+      }
+
+      const startIndex = (currentPage - 1) * PAGE_SIZE;
+      const endIndex = startIndex + PAGE_SIZE;
+      setData(uniqueActors.slice(startIndex, endIndex));
     }
-    getMovies();
-  }, [page]);
+
+    getActors();
+  }, [pageCount]);
 
   return (
     <>
       <Navbar />
       <div className="h-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-12 w-full justify-items-center p-8 pt-28">
-        {data.map((data, index) => (
-          <CardActor key={index} data={data} />
+        {data.map((actor, index) => (
+          <CardActor key={actor.id ?? index} data={actor} />
         ))}
       </div>
       <Pagination className="text-center mx-auto my-8">
@@ -53,6 +82,7 @@ const Actors = () => {
                 } else {
                   setPage(1);
                 }
+                scrollTo(0, 0);
               }}
               className={page === 1 ? "hidden" : ""}
             />
@@ -64,6 +94,7 @@ const Actors = () => {
                 isActive={index + 1 === page}
                 onClick={() => {
                   setPage(index + 1);
+                  scrollTo(0, 0);
                 }}
               >
                 {index + 1}
@@ -76,7 +107,10 @@ const Actors = () => {
           <PaginationItem>
             <PaginationNext
               href={`/Movie-Suggestion/#/actors/${page}`}
-              onClick={() => setPage(page + 1)}
+              onClick={() => {
+                setPage(page + 1);
+                scrollTo(0, 0);
+              }}
               disabled={page === 20}
             />
           </PaginationItem>

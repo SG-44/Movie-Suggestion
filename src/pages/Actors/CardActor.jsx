@@ -7,8 +7,6 @@ export const CardActor = ({ data }) => {
     : null;
 
   const getActorId = () => {
-    console.log(data.id);
-    console.log(data);
     return data.id;
   };
 

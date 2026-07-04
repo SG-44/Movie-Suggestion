@@ -22,7 +22,7 @@ async function fetchMovieCast(id) {
   try {
     const response = await fetch(
       ActorDetails + id + "/movie_credits?language=en-US",
-      options
+      options,
     );
     const data = await response.json();
     return data;
@@ -36,7 +36,7 @@ async function fetchMovies(category, page) {
   try {
     const response = await fetch(
       movies + category + "?language=en-US&page=" + page,
-      options
+      options,
     );
     const data = await response.json();
     return data.results;
@@ -95,7 +95,7 @@ async function fetchTV(category, page) {
   try {
     const response = await fetch(
       tv + category + "?language=en-US&page=" + page,
-      options
+      options,
     );
     const data = await response.json();
     return data.results;
@@ -118,7 +118,10 @@ async function fetchTvDetails(tvId) {
 
 async function fetchTvFullDetails(tvId, season) {
   try {
-    const response = await fetch(tv + tvId + "/season/" + season + "?language=en-US", options);
+    const response = await fetch(
+      tv + tvId + "/season/" + season + "?language=en-US",
+      options,
+    );
     const data = await response.json();
     return data; // <-- return the TV show object, not data.results
   } catch (error) {
@@ -153,7 +156,7 @@ async function fetchTvCreditWithSeason(tvId, season) {
   try {
     const response = await fetch(
       tv + tvId + "/season/" + season + "/credits",
-      options
+      options,
     );
     const data = await response.json();
     return data;
@@ -179,7 +182,7 @@ async function fetchActorDetails(personId) {
   try {
     const response = await fetch(
       ActorDetails + personId + "?language=en-US",
-      options
+      options,
     );
     const data = await response.json();
     return data;
