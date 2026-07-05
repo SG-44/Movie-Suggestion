@@ -14,13 +14,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { fetchMovies } from "@/util/API";
+import { fetchMovies, fetchMoviesByGenres } from "@/util/API";
 
 function Movies() {
   const containerRef = useRef(null);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const { pageCount, category } = useParams();
+  const { pageCount, category, genreIds } = useParams();
 
   useEffect(() => {
     if (pageCount) {
@@ -31,11 +31,17 @@ function Movies() {
   useEffect(() => {
     async function getMovies() {
       window.scrollTo(0, 0);
-      const movies = await fetchMovies(category, page);
+      const movies = genreIds
+        ? await fetchMoviesByGenres(genreIds, page)
+        : await fetchMovies(category, page);
       setData(movies);
     }
     getMovies();
-  }, [category, page]);
+  }, [category, genreIds, page]);
+
+  const moviesPath = genreIds
+    ? `/Movie-Suggestion/#/movies/genres/${genreIds}`
+    : `/Movie-Suggestion/#/movies/${category}`;
 
   useGSAP(
     () => {
@@ -64,7 +70,7 @@ function Movies() {
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              href={`/Movie-Suggestion/#/movies/${category}/${page}`}
+              href={`${moviesPath}/${page - 1}`}
               onClick={() => {
                 if (page > 1) {
                   setPage(page - 1);
@@ -77,7 +83,7 @@ function Movies() {
           {page > 2 && (
             <PaginationItem>
               <PaginationLink
-                href={`/Movie-Suggestion/#/movies/${category}/1`}
+                href={`${moviesPath}/1`}
                 isActive={false}
                 onClick={() => setPage(1)}
               >
@@ -95,7 +101,7 @@ function Movies() {
           {page > 1 && (
             <PaginationItem>
               <PaginationLink
-                href={`/Movie-Suggestion/#/movies/${category}/${page}`}
+                href={`${moviesPath}/${page - 1}`}
                 isActive={false}
                 onClick={() => setPage(page - 1)}
               >
@@ -106,7 +112,7 @@ function Movies() {
           {/* Current page */}
           <PaginationItem>
             <PaginationLink
-              href={`/Movie-Suggestion/#/movies/${category}/${page}`}
+              href={`${moviesPath}/${page}`}
               isActive={true}
               onClick={() => setPage(page)}
             >
@@ -117,7 +123,7 @@ function Movies() {
           {page < 20 && (
             <PaginationItem>
               <PaginationLink
-                href={`/Movie-Suggestion/#/movies/${category}/${page}`}
+                href={`${moviesPath}/${page + 1}`}
                 isActive={false}
                 onClick={() => setPage(page + 1)}
               >
@@ -135,7 +141,7 @@ function Movies() {
           {page < 19 && (
             <PaginationItem>
               <PaginationLink
-                href={`/Movie-Suggestion/#/movies/${category}/20`}
+                href={`${moviesPath}/20`}
                 isActive={false}
                 onClick={() => setPage(20)}
               >
@@ -145,8 +151,13 @@ function Movies() {
           )}
           <PaginationItem>
             <PaginationNext
-              href={`/Movie-Suggestion/#/movies/${category}/${page}`}
-              onClick={() => setPage(page + 1)}
+              href={`${moviesPath}/${page + 1}`}
+              onClick={() => {
+                if (page < 20) {
+                  setPage(page + 1);
+                }
+              }}
+              className={page === 20 ? "hidden" : ""}
             />
           </PaginationItem>
         </PaginationContent>

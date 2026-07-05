@@ -143,7 +143,7 @@ const ActorDetails = () => {
                 .map((relatedMovie) => (
                   <a
                     key={relatedMovie.id}
-                    href={`/moviedetails?q=${relatedMovie.id}`}
+                    href={`/#/moviedetails?q=${relatedMovie.id}`}
                   >
                     <div className="flex flex-col items-center bg-gray-800 p-4 rounded-lg shadow-xl w-32 h-64 sm:h-auto sm:w-48">
                       <img

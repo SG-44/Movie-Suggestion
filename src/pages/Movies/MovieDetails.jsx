@@ -130,7 +130,7 @@ function MovieDetails() {
           <div className="flex gap-4 sm:gap-8 m-2 sm:m-4 overflow-x-auto whitespace-nowrap p-2 sm:p-4">
             {credit.cast.map((member) => (
               <Link
-                to=""
+                to={`/ActorDetails?q=${member.id}`}
                 key={member.id}
                 className="cast-card flex flex-col items-center bg-gray-800 p-4 rounded-lg shadow-lg flex-shrink-0 w-48"
               >
@@ -138,7 +138,7 @@ function MovieDetails() {
                   src={
                     member.profile_path
                       ? `https://image.tmdb.org/t/p/w200/${member.profile_path}`
-                      : `/istockphoto-1147544807-612x612.jpg`
+                      : `public/istockphoto-1147544807-612x612.jpg`
                   }
                   alt={member.name}
                   className="w-24 h-24 rounded-full object-cover"
@@ -146,16 +146,16 @@ function MovieDetails() {
                 <h1 className="text-white text-lg font-bold mt-2 text-wrap">
                   {member.name}
                 </h1>
-                <h2 className="text-gray-400 text-sm">{member.character}</h2>
+                <h2 className="text-gray-400 text-sm text-wrap">{member.character}</h2>
               </Link>
             ))}
           </div>
         </div>
-        <div className="flex flex-col items-center gap-4 m-4 sm:m-8 aspect-video">
-          <h1 className="font-bold text-2xl sm:text-4xl text-white my-4 sm:my-8 text-center">
-            The Trailer :
-          </h1>
-          {trailer.results.find((vid) => vid.type === "Trailer") ? (
+        {trailer.results.find((vid) => vid.type === "Trailer") ? (
+          <div className="flex flex-col items-center gap-4 m-4 sm:m-8 aspect-video">
+            <h1 className="font-bold text-2xl sm:text-4xl text-white my-4 sm:my-8 text-center">
+              The Trailer :
+            </h1>
             <iframe
               className="w-full h-full rounded-sm mx-auto"
               src={`https://www.youtube.com/embed/${
@@ -165,10 +165,12 @@ function MovieDetails() {
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
-          ) : (
-            <p className="text-gray-400 text-lg">No trailer available.</p>
-          )}
-        </div>
+          </div>
+        ) : (
+          <p className="text-gray-400 text-lg text-center">
+            No trailer available.
+          </p>
+        )}
         {/*Similar Movies section*/}
         <div className="flex flex-col m-4 sm:m-8">
           <h1 className="text-xl sm:text-2xl text-white font-bold">
@@ -181,7 +183,7 @@ function MovieDetails() {
               [...similar.results]
                 .filter((movie) => movie.release_date)
                 .sort(
-                  (a, b) => new Date(b.release_date) - new Date(a.release_date)
+                  (a, b) => new Date(b.release_date) - new Date(a.release_date),
                 )
                 .map((relatedMovie) => (
                   <a
@@ -193,7 +195,7 @@ function MovieDetails() {
                         src={
                           relatedMovie.poster_path
                             ? `https://image.tmdb.org/t/p/w200/${relatedMovie.poster_path}`
-                            : `/istockphoto-1147544807-612x612.jpg`
+                            : `public/istockphoto-1147544807-612x612.jpg`
                         }
                         alt={relatedMovie.title}
                         className="w-32 h-48 rounded-lg object-cover"
@@ -244,7 +246,7 @@ function MovieDetails() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-400 text-lg text-center">
+              <p className="text-gray-400 text-lg">
                 No production companies found.
               </p>
             )}

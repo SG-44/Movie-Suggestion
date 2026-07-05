@@ -1,18 +1,52 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { Form, Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import {
+  fetchActorSearch,
+  fetchMovieSearch,
+  fetchTvSearch,
+  movieGenres,
+} from "@/util/API";
 
 function Navbar() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [MenuActive, setMenuActive] = useState(false);
   const [MovieActive, setMovieActive] = useState(false);
   const [TVActive, setTVActive] = useState(false);
+  const [GenreActive, setGenreActive] = useState(false);
   const [SearchActive, setSearchActive] = useState(false);
-  const [Options, setOptions] = useState(false);
-  const [input, setInput] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedGenreIds, setSelectedGenreIds] = useState([]);
 
-  let li = document.getElementById("li");
-  // let search = document.getElementById("search").value.length;
+  const searchType = location.pathname.startsWith("/actors") ||
+    location.pathname.startsWith("/actorDetails")
+    ? "actor"
+    : location.pathname.startsWith("/tv") ||
+        location.pathname.startsWith("/tvDetails")
+      ? "tv"
+      : "movie";
+
+  const searchConfig = {
+    actor: {
+      placeholder: "Search actors...",
+      emptyText: "No actors found.",
+      loadingText: "Searching actors...",
+    },
+    movie: {
+      placeholder: "Search movies...",
+      emptyText: "No movies found.",
+      loadingText: "Searching movies...",
+    },
+    tv: {
+      placeholder: "Search TV shows...",
+      emptyText: "No shows found.",
+      loadingText: "Searching shows...",
+    },
+  };
 
   const toggleMenu = () => {
     setMenuActive(!MenuActive);
@@ -26,14 +60,72 @@ function Navbar() {
     setTVActive(!TVActive);
   };
 
+  const toggleGenre = () => {
+    setGenreActive(!GenreActive);
+  };
+
   const toggleMovie = () => {
     setMovieActive(!MovieActive);
   };
 
-  const toggleOptions = (e) => {
-    setOptions(e.target.value.length > 0);
-    li.innerText = e.target.value;
-    setInput(li.innerText);
+  const toggleGenreSelection = (genreId) => {
+    setSelectedGenreIds((currentGenres) =>
+      currentGenres.includes(genreId)
+        ? currentGenres.filter((id) => id !== genreId)
+        : [...currentGenres, genreId],
+    );
+  };
+
+  const selectedGenrePath =
+    selectedGenreIds.length > 0
+      ? `/movies/genres/${selectedGenreIds.join(",")}/1`
+      : "/movies/popular/1";
+
+  const getSuggestionTitle = (suggestion) =>
+    suggestion.title || suggestion.name || suggestion.original_title;
+
+  const getSuggestionSubtitle = (suggestion) => {
+    if (searchType === "actor") {
+      return suggestion.known_for_department || "Actor";
+    }
+
+    return suggestion.release_date || suggestion.first_air_date || "";
+  };
+
+  const getSuggestionImage = (suggestion) => {
+    const imagePath =
+      searchType === "actor" ? suggestion.profile_path : suggestion.poster_path;
+
+    return imagePath
+      ? `https://image.tmdb.org/t/p/w92/${imagePath}`
+      : "/Movie-Suggestion/istockphoto-1147544807-612x612.jpg";
+  };
+
+  const getSuggestionLink = (suggestion) => {
+    if (searchType === "actor") {
+      return `/actorDetails?q=${suggestion.id}`;
+    }
+
+    if (searchType === "tv") {
+      return `/tvDetails/1/?q=${suggestion.id}`;
+    }
+
+    return `/moviedetails?q=${suggestion.id}`;
+  };
+
+  const closeSearch = () => {
+    setSuggestions([]);
+    setSearchInput("");
+    setSearchActive(false);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+
+    if (suggestions.length > 0) {
+      navigate(getSuggestionLink(suggestions[0]));
+      closeSearch();
+    }
   };
 
   useEffect(() => {
@@ -50,52 +142,116 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
+    const trimmedInput = searchInput.trim();
+
+    if (trimmedInput.length < 2) {
+      setSuggestions([]);
+      setIsSearching(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsSearching(true);
+
+      const searchResults =
+        searchType === "actor"
+          ? await fetchActorSearch(trimmedInput)
+          : searchType === "tv"
+            ? await fetchTvSearch(trimmedInput)
+            : await fetchMovieSearch(trimmedInput);
+
+      setSuggestions(searchResults.slice(0, 6));
+      setIsSearching(false);
+    }, 350);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchInput, searchType]);
+
+  useEffect(() => {
+    setSearchInput("");
+    setSuggestions([]);
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (MovieActive) {
       setTVActive(false);
+      setGenreActive(false);
     }
 
     if (TVActive) {
       setMovieActive(false);
+      setGenreActive(false);
     }
-  }, [MovieActive, TVActive]);
+
+    if (GenreActive) {
+      setMovieActive(false);
+      setTVActive(false);
+    }
+  }, [GenreActive, MovieActive, TVActive]);
 
   return (
     <nav className="flex w-full bg-gray-800 fixed justify-start sm:justify-between items-center z-10 top-0">
       <h1 className="pt-4 px-2 text-white text-2xl sm:text-3xl animate-bounce font-bold">
         MoviesForU
       </h1>
-      <Form action="/moviedetails">
+      <form onSubmit={handleSearchSubmit} className="relative">
         <input
           id="search"
-          name="q"
           type="text"
-          placeholder="Search..."
+          value={searchInput}
+          placeholder={searchConfig[searchType].placeholder}
           className={`${
             SearchActive && window.innerWidth < 640
               ? "fixed w-full h-8 bg-white text-black focus-visible:outline-none border-2 rounded-sm pl-4 transition duration-300 ease-in-out -top-8 left-1/2 -translate-x-1/2 SearchBar translate-y-26"
               : "sm:block hidden border-indigo-300 md:w-100 max-w-100 md:min-w-70 h-10 rounded-sm border-2 sm:rounded-3xl pl-4 sm:placeholder:text-indigo-200 focus-within:outline-none focus-visible:border-indigo-500 text-white text-2xl sm:m-4 md:mx-8 shrink-0 sm:shrink-5 grow-0 sm:grow lg:grow-0"
           }`}
-          onChange={toggleOptions}
+          onChange={(event) => setSearchInput(event.target.value)}
+          autoComplete="off"
         />
         <button type="submit" className="hidden">
           Search
         </button>
-      </Form>
+      </form>
       <div
-        className={`gap-4 left-0 top-26 sm:top-18 w-full bg-white text-black text-lg transition duration-300 ease-in-out ${
-          Options ? "fixed" : "hidden"
+        className={`left-0 top-26 sm:top-18 w-full bg-white text-black text-lg transition duration-300 ease-in-out shadow-xl ${
+          searchInput.trim().length >= 2 ? "fixed" : "hidden"
         }`}
       >
-        <ul className="flex flex-col w-full">
-          <Link to={`/moviedetails?q=${input}`} className="hover:bg-gray-200">
-            <li
-              className="border-1 w-full pl-4"
-              id="li"
-              onClick={toggleOptions}
-            >
-              text
+        <ul className="flex flex-col w-full max-h-96 overflow-y-auto">
+          {isSearching ? (
+            <li className="border-b border-gray-200 p-4 text-gray-500">
+              {searchConfig[searchType].loadingText}
             </li>
-          </Link>
+          ) : suggestions.length > 0 ? (
+            suggestions.map((suggestion) => (
+              <Link
+                key={suggestion.id}
+                to={getSuggestionLink(suggestion)}
+                className="hover:bg-gray-200"
+                onClick={closeSearch}
+              >
+                <li className="border-b border-gray-200 p-3 flex items-center gap-3">
+                  <img
+                    src={getSuggestionImage(suggestion)}
+                    alt={getSuggestionTitle(suggestion)}
+                    className="h-16 w-12 rounded-sm object-cover bg-gray-200"
+                  />
+                  <div className="min-w-0">
+                    <p className="font-bold truncate">
+                      {getSuggestionTitle(suggestion)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {getSuggestionSubtitle(suggestion)}
+                    </p>
+                  </div>
+                </li>
+              </Link>
+            ))
+          ) : (
+            <li className="border-b border-gray-200 p-4 text-gray-500">
+              {searchConfig[searchType].emptyText}
+            </li>
+          )}
         </ul>
       </div>
       <button
@@ -124,8 +280,51 @@ function Navbar() {
             <Link to="/actors/1">Actors</Link>
           </li>
 
-          <li className="transition duration-200 ease-in-out hover:text-indigo-300 hover:scale-110 hover:-translate-y-1 border-b-2 border-transparent hover:border-indigo-300">
-            <Link to="/actors/1">Genres</Link>
+          <li
+            className="text-indigo-200 transition duration-300 ease-out hover:-translate-y-1 hover:scale-110"
+            onClick={toggleGenre}
+          >
+            <button className="cursor-pointer hover:text-indigo-300 transition duration-300 ease-out">
+              Genres
+            </button>
+            <ul
+              className={`absolute right-4 bg-gray-800 p-4 w-64 max-h-96 overflow-y-auto text-base ${
+                GenreActive ? "block" : "hidden"
+              }`}
+              onClick={(event) => event.stopPropagation()}
+            >
+              {movieGenres.map((genre) => (
+                <li key={genre.id} className="mb-2">
+                  <label className="flex items-center gap-2 cursor-pointer hover:text-indigo-300">
+                    <input
+                      type="checkbox"
+                      checked={selectedGenreIds.includes(genre.id)}
+                      onChange={() => toggleGenreSelection(genre.id)}
+                      className="h-4 w-4 accent-indigo-400"
+                    />
+                    {genre.name}
+                  </label>
+                </li>
+              ))}
+              <li className="flex gap-2 pt-2">
+                <Link
+                  to={selectedGenrePath}
+                  className="bg-indigo-400 text-gray-900 px-3 py-1 rounded-sm hover:bg-indigo-300"
+                  onClick={() => {
+                    setGenreActive(false);
+                    setMenuActive(false);
+                  }}
+                >
+                  Apply
+                </Link>
+                <button
+                  className="border border-indigo-300 px-3 py-1 rounded-sm hover:text-indigo-300"
+                  onClick={() => setSelectedGenreIds([])}
+                >
+                  Clear
+                </button>
+              </li>
+            </ul>
           </li>
 
           <li
@@ -214,8 +413,39 @@ function Navbar() {
           <Link to="/actors/1">Actors</Link>
         </li>
 
-        <li className="transition duration-200 ease-in-out hover:text-indigo-300 hover:scale-110 hover:-translate-y-1 border-b-2 border-transparent hover:border-indigo-300">
-          <Link to="/actors/1">Genres</Link>
+        <li className="text-indigo-200 hover:*:block transition duration-300 ease-out hover:-translate-y-1 hover:scale-110">
+          <button className="cursor-pointer hover:text-indigo-300 transition duration-300 ease-out">
+            Genres
+          </button>
+          <ul className="hidden *:block absolute bg-gray-800 p-4 w-64 max-h-96 overflow-y-auto text-base">
+            {movieGenres.map((genre) => (
+              <li key={genre.id} className="mb-2">
+                <label className="flex items-center gap-2 cursor-pointer hover:text-indigo-300">
+                  <input
+                    type="checkbox"
+                    checked={selectedGenreIds.includes(genre.id)}
+                    onChange={() => toggleGenreSelection(genre.id)}
+                    className="h-4 w-4 accent-indigo-400"
+                  />
+                  {genre.name}
+                </label>
+              </li>
+            ))}
+            <li className="flex gap-2 pt-2">
+              <Link
+                to={selectedGenrePath}
+                className="bg-indigo-400 text-gray-900 px-3 py-1 rounded-sm hover:bg-indigo-300"
+              >
+                Apply
+              </Link>
+              <button
+                className="border border-indigo-300 px-3 py-1 rounded-sm hover:text-indigo-300 mx-2 cursor-pointer"
+                onClick={() => setSelectedGenreIds([])}
+              >
+                Clear
+              </button>
+            </li>
+          </ul>
         </li>
 
         <li className="text-indigo-200 hover:*:block transition duration-300 ease-out hover:-translate-y-1 hover:scale-110">

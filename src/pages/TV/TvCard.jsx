@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const TvCard = ({ tv }) => {
   const posterURL = tv.poster_path
     ? `https://image.tmdb.org/t/p/w200/${tv.poster_path}`
-    : `/istockphoto-1147544807-612x612.jpg`;
+    : `public/istockphoto-1147544807-612x612.jpg`;
 
   return (
     <Link to={`/tvDetails/1?q=${tv.id}`}>

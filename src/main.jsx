@@ -17,6 +17,10 @@ const router = new createHashRouter([
     errorElement: <Error />,
   },
   {
+    path: "/movies/genres/:genreIds/:pageCount",
+    element: <Movies />,
+  },
+  {
     path: "/movies/:category/:pageCount",
     element: <Movies />,
   },

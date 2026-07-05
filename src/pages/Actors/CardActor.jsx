@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 export const CardActor = ({ data }) => {
   const posterURL = data.profile_path
     ? `https://image.tmdb.org/t/p/w200/${data.profile_path}`
-    : null;
+    : 'public/istockphoto-1147544807-612x612.jpg';
 
   const getActorId = () => {
     return data.id;
