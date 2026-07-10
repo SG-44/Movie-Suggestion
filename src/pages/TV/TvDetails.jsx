@@ -8,7 +8,7 @@ import {
 } from "@/util/API";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 
 const TvDetails = () => {
@@ -23,6 +23,7 @@ const TvDetails = () => {
   const [similar, setSimilar] = useState(null);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [showAllEpisodes, setShowAllEpisodes] = useState(false);
+  const similarTvRef = useRef(null);
 
   gsap.registerPlugin(useGSAP);
 
@@ -36,16 +37,34 @@ const TvDetails = () => {
   }, [seasonParam, episodeParam]);
 
   useEffect(() => {
-    async function fetchMovieDetails() {
+    window.scrollTo(0, 0);
+    similarTvRef.current?.scrollTo({ left: 0 });
+    setTv(null);
+    setFullData(null);
+    setCredit(null);
+    setSimilar(null);
+    setShowAllEpisodes(false);
+
+    async function fetchTvDetailsData() {
       try {
         const data = await fetchTvDetails(tvId);
-        const bigData = await fetchTvFullDetails(tvId, season);
-        const cast = await fetchTvCreditWithSeason(tvId, season);
         const videos = await fetchSimilarTv(tvId);
         setTv(data);
+        setSimilar(videos);
+      } catch (error) {
+        console.error("Error fetching TV details:", error);
+      }
+    }
+    fetchTvDetailsData();
+  }, [tvId]);
+
+  useEffect(() => {
+    async function fetchMovieDetails() {
+      try {
+        const bigData = await fetchTvFullDetails(tvId, season);
+        const cast = await fetchTvCreditWithSeason(tvId, season);
         setFullData(bigData);
         setCredit(cast);
-        setSimilar(videos);
       } catch (error) {
         console.error("Error fetching movie details:", error);
       }
@@ -53,7 +72,7 @@ const TvDetails = () => {
     fetchMovieDetails();
   }, [tvId, season, episode]);
 
-  if (!tv) {
+  if (!tv || !fullData || !credit || !similar) {
     return (
       <>
         <div className="h-18 bg-gray-800 w-full"></div>
@@ -79,41 +98,47 @@ const TvDetails = () => {
 
   const posterURL = tv.poster_path
     ? `https://image.tmdb.org/t/p/w500/${tv.poster_path}`
-    : `public/istockphoto-1147544807-612x612.jpg`;
+    : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`;
 
-  console.log(fullData.episodes.length);
+  const visibleEpisodes = showAllEpisodes
+    ? fullData.episodes
+    : fullData.episodes.slice(0, 10);
 
   return (
     <>
       <Navbar />
       <div className="h-full mt-28 border-2 border-indigo-400 rounded-2xl m-4">
-        <div className="p-8 flex">
+        <div className="p-4 flex flex-col md:flex-row items-center md:items-start gap-8 h-auto">
           <img
             src={posterURL}
-            alt={tv.original_title}
-            className="rounded-lg shadow-lg w-120 h-160"
+            alt={tv.name}
+            className="rounded-lg shadow-lg w-64 h-96 sm:w-80 sm:h-120 md:w-100 md:h-140 lg:w-110 lg:h-140 object-cover"
           />
-          <div className="flex flex-col items-start justify-between mx-8 h-160">
-            <h1 className="text-6xl font-bold text-white">{tv.name}</h1>
-            <p className="text-white text-xl">
+          <div className="flex flex-col items-center md:items-start justify-between md:mx-8 gap-2 w-full">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center md:text-left">
+              {tv.name}
+            </h1>
+            <p className="text-white text-lg sm:text-xl md:text-2xl">
               <strong>Release Date : </strong> {tv.first_air_date}
             </p>
-            <p className="text-white mt-2 text-xl">
-              <strong>Original Language : </strong>
+            <p className="text-white mt-2 text-lg sm:text-xl md:text-2xl">
+              <strong>Language : </strong>
               {tv.original_language.toUpperCase()}
             </p>
-            <div className="flex gap-4 items-center">
-              <p className="text-white font-bold text-2xl">Genres : </p>
+            <div className="flex flex-wrap gap-2 items-center justify-center md:justify-start">
+              <p className="text-white font-bold text-lg sm:text-xl md:text-2xl">
+                Genres :
+              </p>
               {tv.genres.map((genre) => (
                 <p
-                  className="text-white bg-indigo-400 p-2 rounded-sm"
+                  className="text-white bg-indigo-400 p-2 rounded-sm text-xs sm:text-sm md:text-base"
                   key={genre.id}
                 >
                   {genre.name}
                 </p>
               ))}
             </div>
-            <p className="text-white my-4 text-left text-2xl">
+            <p className="text-white text-left text-lg sm:text-xl md:text-2xl max-w-2xl">
               <strong>Description: </strong>
               <br />
               {tv.overview ? (
@@ -145,27 +170,40 @@ const TvDetails = () => {
                   </>
                 )
               ) : (
-                "No bio available."
+                "No description available."
               )}
             </p>
-            <p className="text-white mt-2 text-xl">
+            <p className="text-white mt-2 text-lg sm:text-xl md:text-2xl">
               <strong>Rating : </strong>
               {tv.vote_average}/10 ({tv.vote_count} rating)
             </p>
-            <p className="text-indigo-800 w-full bg-indigo-100 p-4 mt-2 text-2xl text-center rounded-xl hover:shadow-2xl hover:bg-indigo-200 cursor-pointer hover:text-indigo-600 transition duration-200 ease-in-out">
-              <a href={tv.homepage} target="_blank">
-                <strong>Watch Now!</strong>
-              </a>
-            </p>
           </div>
         </div>
+        <div className="w-full mx-auto px-4">
+          <p className="text-indigo-800 w-full bg-indigo-100 p-4 text-lg sm:text-xl md:text-4xl text-center rounded-xl hover:shadow-2xl hover:bg-indigo-200 cursor-pointer hover:text-indigo-600 transition duration-200 ease-in-out">
+            <a href={tv.homepage} target="_blank" rel="noreferrer">
+              <strong>Watch Now!</strong>
+            </a>
+          </p>
+        </div>
         {/* Seasons / Episodes Section */}
-        <div>
-          <div>
+        <div className="flex flex-col m-4 sm:m-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 my-2 sm:my-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl text-white font-bold">
+                Episodes :
+              </h1>
+              <p className="text-gray-400 text-sm sm:text-base">
+                Season {season} - {fullData.episodes.length} episodes
+              </p>
+            </div>
             <select
               value={season}
-              onChange={(e) => setSeason(Number(e.target.value))}
-              className="p-3 rounded bg-gray-800 text-white mx-8 text-xl text-center font-bold"
+              onChange={(e) => {
+                setSeason(Number(e.target.value));
+                setShowAllEpisodes(false);
+              }}
+              className="p-3 rounded bg-gray-800 text-white text-base sm:text-xl text-center font-bold border border-gray-700"
             >
               {tv.seasons.map((s) => (
                 <option key={s.id || s.season_number} value={s.season_number}>
@@ -174,116 +212,68 @@ const TvDetails = () => {
               ))}
             </select>
           </div>
-          {fullData.episodes.length > 10 && showAllEpisodes === false ? (
-            <>
-              <div className="grid grid-cols-5 m-4 overflow-x-auto whitespace-nowrap gap-x-2">
-                {fullData.episodes.slice(0, 10).map((s) => (
-                  <div
-                    key={s.id || s.episode_number}
-                    className="flex flex-col items-center justify-between bg-gray-800 p-2 rounded-lg shadow-2xl flex-shrink-0 w-48 h-auto m-4"
-                  >
-                    <h1 className="text-white text-2xl font-bold text-center line-clamp-2 text-wrap">
-                      Episode {s.episode_number}
-                    </h1>
-                    <img
-                      src={
-                        s.still_path
-                          ? `https://image.tmdb.org/t/p/w200/${s.still_path}`
-                          : `public/istockphoto-1147544807-612x612.jpg`
-                      }
-                      alt={s.name}
-                      className="w-36 rounded-sm object-fill"
-                    />
-                    <h1 className="text-white text-xl font-bold text-center line-clamp-3 text-wrap">
-                      {s.name}
-                    </h1>
-                    <p className="text-gray-400 text-sm text-center">
-                      {s.air_date}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <button
-                className="text-white text-xl text-center text-nowrap bg-gray-800 p-4 rounded-lg shadow-lg m-8 w-auto cursor-pointer"
-                onClick={() => setShowAllEpisodes(true)}
-              >
-                See More..
-              </button>
-            </>
-          ) : fullData.episodes.length > 10 && showAllEpisodes === true ? (
-            <>
-              <div className="grid grid-cols-5 m-4 overflow-x-auto whitespace-nowrap gap-x-2">
-                {fullData.episodes.map((s) => (
-                  <div
-                    key={s.id || s.episode_number}
-                    className="flex flex-col items-center justify-between bg-gray-800 p-2 rounded-lg shadow-2xl flex-shrink-0 w-48 h-auto m-4"
-                  >
-                    <h1 className="text-white text-2xl font-bold text-center line-clamp-2 text-wrap">
-                      Episode {s.episode_number}
-                    </h1>
-                    <img
-                      src={
-                        s.still_path
-                          ? `https://image.tmdb.org/t/p/w200/${s.still_path}`
-                          : `/istockphoto-1147544807-612x612.jpg`
-                      }
-                      alt={s.name}
-                      className="w-36 rounded-sm object-fill"
-                    />
-                    <h1 className="text-white text-xl font-bold text-center line-clamp-3 text-wrap">
-                      {s.name}
-                    </h1>
-                    <p className="text-gray-400 text-sm text-center">
-                      {s.air_date}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <button
-                className="text-white text-xl text-center text-nowrap bg-gray-800 p-4 rounded-lg shadow-lg m-8 w-auto cursor-pointer"
-                onClick={() => setShowAllEpisodes(false)}
-              >
-                Show Less..
-              </button>
-            </>
-          ) : fullData.episodes.length <= 10 ? (
-            <div className="grid grid-cols-5 m-4 overflow-x-auto whitespace-nowrap gap-x-2">
-              {fullData.episodes.map((s) => (
+          {fullData.episodes.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {visibleEpisodes.map((s) => (
                 <div
                   key={s.id || s.episode_number}
-                  className="flex flex-col items-center justify-between bg-gray-800 p-2 rounded-lg shadow-2xl flex-shrink-0 w-48 h-auto m-4"
+                  className="bg-gray-800 rounded-lg shadow-xl overflow-hidden flex flex-col sm:flex-row xl:flex-col"
                 >
-                  <h1 className="text-white text-2xl font-bold text-center line-clamp-2 text-wrap">
-                    Episode {s.episode_number}
-                  </h1>
                   <img
                     src={
                       s.still_path
-                        ? `https://image.tmdb.org/t/p/w200/${s.still_path}`
-                        : `/istockphoto-1147544807-612x612.jpg`
+                        ? `https://image.tmdb.org/t/p/w300/${s.still_path}`
+                        : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`
                     }
                     alt={s.name}
-                    className="w-36 rounded-sm object-fill"
+                    className="w-full sm:w-40 xl:w-full h-44 sm:h-auto xl:h-44 object-cover"
                   />
-                  <h1 className="text-white text-xl font-bold text-center line-clamp-3 text-wrap">
-                    {s.name}
-                  </h1>
-                  <p className="text-gray-400 text-sm text-center">
-                    {s.air_date}
-                  </p>
+                  <div className="flex flex-col justify-between gap-3 p-4 min-w-0">
+                    <div>
+                      <p className="text-indigo-300 text-sm font-bold">
+                        Episode {s.episode_number}
+                      </p>
+                      <h2 className="text-white text-lg sm:text-xl font-bold line-clamp-2">
+                        {s.name || "Untitled episode"}
+                      </h2>
+                    </div>
+                    <p className="text-gray-300 text-sm line-clamp-3">
+                      {s.overview || "No episode description available."}
+                    </p>
+                    <div className="flex items-center justify-between gap-3 text-sm">
+                      <p className="text-gray-400">{s.air_date || "TBA"}</p>
+                      {s.vote_average > 0 && (
+                        <p className="text-white bg-indigo-500 px-2 py-1 rounded-sm font-bold">
+                          {s.vote_average.toFixed(1)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-white text-xl">No episodes available.</p>
+            <p className="text-gray-400 text-lg">No episodes available.</p>
+          )}
+          {fullData.episodes.length > 10 && (
+            <button
+              className="text-white text-lg sm:text-xl text-center text-nowrap bg-gray-800 p-4 rounded-lg shadow-lg mt-6 w-full sm:w-fit cursor-pointer hover:bg-gray-700 transition"
+              onClick={() =>
+                setShowAllEpisodes((showEpisodes) => !showEpisodes)
+              }
+            >
+              {showAllEpisodes ? "Show Less" : "See More"}
+            </button>
           )}
         </div>
         {/* Crew Members Section */}
-        <div className="flex flex-col m-10">
-          <h1 className="text-2xl text-white font-bold">The Crew :</h1>
+        <div className="flex flex-col m-6 md:m-10">
+          <h1 className="text-xl sm:text-2xl text-white font-bold">
+            The Crew :
+          </h1>
           <div
             id="scroll"
-            className="flex gap-8 overflow-x-auto whitespace-nowrap p-4"
+            className="flex gap-4 sm:gap-8 m-2 sm:m-4 overflow-x-auto whitespace-nowrap p-2 sm:p-4"
           >
             {credit.crew ? (
               [...credit.crew]
@@ -301,7 +291,7 @@ const TvDetails = () => {
                       src={
                         d.profile_path
                           ? `https://image.tmdb.org/t/p/w200/${d.profile_path}`
-                          : `public/istockphoto-1147544807-612x612.jpg`
+                          : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`
                       }
                       alt={d.name}
                       className="w-24 h-24 rounded-full object-cover"
@@ -327,7 +317,7 @@ const TvDetails = () => {
                   src={
                     member.profile_path
                       ? `https://image.tmdb.org/t/p/w200/${member.profile_path}`
-                      : `public/istockphoto-1147544807-612x612.jpg`
+                      : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`
                   }
                   alt={member.name}
                   className="w-24 h-24 rounded-full object-cover"
@@ -345,8 +335,10 @@ const TvDetails = () => {
             fullData.episodes.flatMap((ep) => ep.guest_stars || []).length !==
               0 && (
               <div className="mt-8">
-                <h2 className="text-2xl text-white font-bold">Guest Stars :</h2>
-                <div className="flex gap-8 overflow-x-auto whitespace-nowrap p-4">
+                <h2 className="text-xl sm:text-2xl text-white font-bold">
+                  Guest Stars :
+                </h2>
+                <div className="flex gap-4 sm:gap-8 m-2 sm:m-4 overflow-x-auto whitespace-nowrap p-2 sm:p-4">
                   {Array.from(
                     new Map(
                       fullData.episodes
@@ -364,7 +356,7 @@ const TvDetails = () => {
                         src={
                           guest.profile_path
                             ? `https://image.tmdb.org/t/p/w200/${guest.profile_path}`
-                            : `/istockphoto-1147544807-612x612.jpg`
+                            : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`
                         }
                         alt={guest.name}
                         className="w-24 h-24 rounded-full object-cover"
@@ -382,9 +374,14 @@ const TvDetails = () => {
             )}
         </div>
         {/* Similar TvSeries Section */}
-        <div className="flex flex-col m-8">
-          <h1 className="text-2xl text-white font-bold">Similar TvSeries :</h1>
-          <div className="flex gap-8 m-4 overflow-x-auto whitespace-nowrap p-4">
+        <div className="flex flex-col m-4 sm:m-8">
+          <h1 className="text-xl sm:text-2xl text-white font-bold">
+            Similar TvSeries :
+          </h1>
+          <div
+            ref={similarTvRef}
+            className="flex gap-4 sm:gap-8 m-2 sm:m-4 overflow-x-auto whitespace-nowrap p-2 sm:p-4"
+          >
             {similar.results &&
             Array.isArray(similar.results) &&
             similar.results.some((c) => c.poster_path) ? (
@@ -404,7 +401,7 @@ const TvDetails = () => {
                         src={
                           relatedTv.poster_path
                             ? `https://image.tmdb.org/t/p/w200/${relatedTv.poster_path}`
-                            : `public/istockphoto-1147544807-612x612.jpg`
+                            : `/Movie-Suggestion/istockphoto-1147544807-612x612.jpg`
                         }
                         alt={relatedTv.name}
                         className="w-32 h-48 rounded-lg object-cover"
@@ -419,32 +416,37 @@ const TvDetails = () => {
                   </a>
                 ))
             ) : (
-              <p className="text-gray-400 text-lg">No related movies found.</p>
+              <p className="text-gray-400 text-lg">No related TV shows found.</p>
             )}
           </div>
         </div>
         {/* Production Companies Section */}
-        <div className="flex flex-col m-8">
-          <h1 className="text-2xl text-white font-bold my-4">
+        <div className="flex flex-col m-4 sm:m-8">
+          <h1 className="text-xl sm:text-2xl text-white font-bold my-2 sm:my-4">
             Production Companies :{" "}
           </h1>
-          <div className="flex gap-6 overflow-x-auto whitespace-nowrap justify-around p-4">
+          <div className="flex gap-4 sm:gap-6 justify-around p-2 sm:p-4 overflow-x-auto whitespace-nowrap">
             {tv.production_companies &&
-            Array.isArray(tv.production_companies) ? (
+            tv.production_companies.length > 0 ? (
               [...tv.production_companies].map((p) => (
                 <div
                   key={p.id}
-                  className="flex flex-col items-center justify-around bg-indigo-500 p-4 rounded-lg shadow-xl flex-shrink-1"
+                  className="flex flex-col items-center text-center"
                 >
-                  <img
-                    src={
-                      p.logo_path
-                        ? `https://image.tmdb.org/t/p/w200/${p.logo_path}`
-                        : `/istockphoto-1147544807-612x612.jpg`
-                    }
-                    className="max-w-56 max-h-56 object-contain"
-                  ></img>
-                  <h1 className="text-white text-xl text-center text-wrap">
+                  {p.logo_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w200/${p.logo_path}`}
+                      alt={p.name}
+                      className="w-42 h-full rounded-2xl object-contain mx-auto"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center mx-auto">
+                      <span className="text-white text-xl font-bold">
+                        {p.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                  <h1 className="text-white text-sm sm:text-xl mt-2 text-wrap">
                     {p.name}
                   </h1>
                 </div>

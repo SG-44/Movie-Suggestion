@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from "react-router";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   fetchMovieCredit,
   fetchMoviesDetails,
@@ -18,11 +18,13 @@ function MovieDetails() {
   const [credit, setCredit] = useState(null);
   const [trailer, setTrailer] = useState(null);
   const [similar, setSimilar] = useState(null);
+  const similarMoviesRef = useRef(null);
 
   gsap.registerPlugin(useGSAP);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    similarMoviesRef.current?.scrollTo({ left: 0 });
 
     async function fetchMovieDetails() {
       try {
@@ -176,7 +178,10 @@ function MovieDetails() {
           <h1 className="text-xl sm:text-2xl text-white font-bold">
             Similar Movies :
           </h1>
-          <div className="flex gap-4 sm:gap-8 m-2 sm:m-4 overflow-x-auto whitespace-nowrap p-2 sm:p-4">
+          <div
+            ref={similarMoviesRef}
+            className="flex gap-4 sm:gap-8 m-2 sm:m-4 overflow-x-auto whitespace-nowrap p-2 sm:p-4"
+          >
             {similar.results &&
             Array.isArray(similar.results) &&
             similar.results.some((c) => c.poster_path) ? (

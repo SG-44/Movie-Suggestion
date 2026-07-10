@@ -1,7 +1,7 @@
 import Footer from "@/components/Footer/Footer";
 import Navbar from "@/components/Navbar/Navbar";
 import { fetchActorDetails, fetchMovieCast } from "@/util/API";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
 const ActorDetails = () => {
@@ -10,9 +10,11 @@ const ActorDetails = () => {
   const [data, setData] = useState(null);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [cast, setCast] = useState({ results: [] });
+  const relatedMoviesRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    relatedMoviesRef.current?.scrollTo({ left: 0 });
 
     async function fetchMovieDetails() {
       try {
@@ -131,7 +133,10 @@ const ActorDetails = () => {
         {/* Related movies section */}
         <div className="flex flex-col my-8">
           <h1 className="text-3xl text-white font-bold">Related Movies :</h1>
-          <div className="flex gap-4 overflow-x-auto whitespace-nowrap p-2">
+          <div
+            ref={relatedMoviesRef}
+            className="flex gap-4 overflow-x-auto whitespace-nowrap p-2"
+          >
             {cast &&
             Array.isArray(cast.cast) &&
             cast.cast.some((c) => c.poster_path) ? (
